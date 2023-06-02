@@ -1,0 +1,48 @@
+version: '3.1'
+
+services:
+  api:
+    build:
+      dockerfile: ./nginx.dockerfile
+    ports:
+      - 5000:5000
+    networks:
+      - app-network
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build:
+      args:
+      dockerfile: ./php.dockerfile
+    ports:
+      - 9000:9000
+    networks:
+      - app-network
+    
+  ui:
+    build:
+      context: ./front/
+      args:
+        API_URL: http://localhost:5000
+    command: npm start
+    networks:
+      - app-network
+    ports:
+        - 3000:3000
+    depends_on:
+      - php-fpm
+      - api
+      - db
+
+  db:
+    build:
+      args:
+      dockerfile: db.dockerfile
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
