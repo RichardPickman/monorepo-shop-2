@@ -2,8 +2,11 @@ version: '3.1'
 
 services:
   api:
-    build:
-      dockerfile: ./nginx.dockerfile
+    container_name: nginx-service
+    image: php:fpm
+    volumes: 
+      - ./php-task:/var/www/html/
+      - ./etc/nginx.conf:/var/nginx/conf.d/default.conf
     ports:
       - 5000:5000
     networks:
@@ -43,9 +46,8 @@ services:
       - db
 
   db:
-    build:
-      args:
-      dockerfile: db.dockerfile
+    container_name: db-service
+    image: mysql
     restart: always
     volumes: 
       - ./db/products.sql:/docker-entrypoint-initdb.d/products.sql
