@@ -12,9 +12,16 @@ services:
       - php-fpm
 
   php-fpm:
-    build:
-      args:
-      dockerfile: ./php.dockerfile
+    container_name: php-fpm-service
+    image: php:fpm
+    volumes: 
+      - ./php-task:/var/www/html/
+    command: bash -c "docker-php-ext-install pdo_mysql && php-fpm"
+    environment:
+      SERVER: ${SERVER}
+      DATABASE: ${DATABASE}
+      USERNAME: ${USERNAME}
+      PASSWORD: ${PASSWORD}
     ports:
       - 9000:9000
     networks:
@@ -24,7 +31,7 @@ services:
     build:
       context: ./front/
       args:
-        API_URL: http://localhost:5000
+        API_URL: http://localhost:5000/index.php
     command: npm start
     networks:
       - app-network
@@ -40,6 +47,12 @@ services:
       args:
       dockerfile: db.dockerfile
     restart: always
+    volumes: 
+      - ./db/products.sql:/docker-entrypoint-initdb.d/products.sql
+    environment:
+      MY_SQL_ROOT_PASSWORD: ${MY_SQL_ROOT_PASSWORD}
+      MY_SQL_USER: ${MY_SQL_USER}
+      MY_SQL_PASSWORD: ${MY_SQL_PASSWORD}
     networks:
       - app-network
 
