@@ -1,0 +1,14 @@
+{
+    "name": "monorepo",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "test": "npx codeceptjs run"
+    },
+    "dependencies": {
+        "codeceptjs": "^3.4.1"
+    },
+    "devDependencies": {
+        "playwright": "^1.34.3"
+    }
+}
