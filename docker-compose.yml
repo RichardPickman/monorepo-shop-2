@@ -3,16 +3,16 @@ version: '3.1'
 services:
   api:
     container_name: nginx-service
-    image: php:fpm
+    image: nginx:latest
     volumes: 
       - ./php-task:/var/www/html/
-      - ./etc/nginx.conf:/var/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 5000:5000
-    networks:
-      - app-network
     depends_on:
       - php-fpm
+    networks:
+      - shop
 
   php-fpm:
     container_name: php-fpm-service
@@ -21,43 +21,44 @@ services:
       - ./php-task:/var/www/html/
     command: bash -c "docker-php-ext-install pdo_mysql && php-fpm"
     environment:
-      SERVER: ${SERVER}
-      DATABASE: ${DATABASE}
-      USERNAME: ${USERNAME}
-      PASSWORD: ${PASSWORD}
+      - SERVER=${SERVER}
+      - DATABASE=${DATABASE}
+      - USERNAME=root
+      - PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - 9000:9000
     networks:
-      - app-network
+      - shop
     
   ui:
+    container_name: frontend-service
     build:
       context: ./front/
       args:
-        API_URL: ${API_URL}
+        - API_URL=${API_URL}
     command: npm start
-    networks:
-      - app-network
     ports:
         - 3000:3000
     depends_on:
       - php-fpm
       - api
       - db
+    networks:
+      - shop
 
   db:
     container_name: db-service
-    image: mysql
+    image: mysql:latest
     restart: always
-    volumes: 
+    volumes:
+      - ./db/database:/var/lib/mysql
       - ./db/products.sql:/docker-entrypoint-initdb.d/products.sql
     environment:
-      MY_SQL_ROOT_PASSWORD: ${MY_SQL_ROOT_PASSWORD}
-      MY_SQL_USER: ${MY_SQL_USER}
-      MY_SQL_PASSWORD: ${MY_SQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     networks:
-      - app-network
+      - shop
 
 networks:
-  app-network:
-    driver: bridge
+  shop:
