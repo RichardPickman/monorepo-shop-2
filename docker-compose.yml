@@ -35,8 +35,11 @@ services:
     build:
       context: ./front/
       args:
-        - API_URL=${API_URL}
-    command: npm start
+        - API_URL={$API_URL}
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+      - /app/.next
     ports:
         - 3000:3000
     depends_on:
