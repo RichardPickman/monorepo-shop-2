@@ -83,7 +83,7 @@ Scenario('Check all the Products checkboxes and delete products', ({ I }) => {
     I.executeScript(function () {
         checkboxes = document.getElementsByClassName('delete-checkbox');
         for (i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].checked = true;
+            checkboxes[i].click(); //This line as I mentioned will initiate an onClick event of a tag, since checkbox is an Input tag and has a either onChange and onClick event handler.
         }
     });
 
