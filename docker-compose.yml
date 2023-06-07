@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3'
 
 services:
   api:
@@ -35,7 +35,7 @@ services:
     build:
       context: ./front/
       args:
-        - API_URL={$API_URL}
+        - API_URL=${API_URL}
     volumes:
       - ./front:/app
       - /app/node_modules
