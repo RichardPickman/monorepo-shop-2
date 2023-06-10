@@ -34,12 +34,9 @@ services:
     container_name: frontend-service
     build:
       context: ./front/
+      target: runner
       args:
         - API_URL=${API_URL}
-    volumes:
-      - ./front:/app
-      - /app/node_modules
-      - /app/.next
     ports:
         - 3000:3000
     depends_on:
